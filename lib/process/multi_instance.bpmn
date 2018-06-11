@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.6.0">
+  <bpmn:collaboration id="random">
+    <bpmn:participant id="Participant_1het0to" name="multi-instance-integration-sample" processRef="Process_1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="true">
+    <bpmn:laneSet>
+      <bpmn:lane id="seller" name="卖方">
+        <bpmn:flowNodeRef>StartEvent_0785gdi</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="financingInstitution" name="银行">
+        <bpmn:flowNodeRef>ProcessRequestSubprocess</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_0ma8sz9</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:sequenceFlow id="SequenceFlow_10nkbh1" sourceRef="StartEvent_0785gdi" targetRef="ProcessRequestSubprocess" />
+    <bpmn:startEvent id="StartEvent_0785gdi">
+      <bpmn:outgoing>SequenceFlow_10nkbh1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:subProcess id="ProcessRequestSubprocess" name="处理申请流程">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="startCandidateGroups" value="[&#34;seller&#34;]" />
+          <camunda:property name="stopCandidateGroups" value="[&#34;financingInstitution&#34;]" />
+          <camunda:property name="startLabel" value="&#34;创建申请流程&#34;" />
+          <camunda:property name="stopLabel" value="&#34;停止创建申请流程&#34;" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_10nkbh1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1g5xdso</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="not_used" />
+      <bpmn:startEvent id="StartEvent_1hz43s2">
+        <bpmn:outgoing>SequenceFlow_0b1lmtl</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:userTask id="submitRequest" name="提交申请" camunda:candidateGroups="[&#34;seller&#34;]">
+        <bpmn:extensionElements>
+          <camunda:formData>
+            <camunda:formField id="requestId" label="申请ID" type="string" defaultValue="&#34;&#34;" />
+          </camunda:formData>
+          <camunda:inputOutput>
+            <camunda:outputParameter name="Output_2fgppeb">
+              <camunda:script scriptFormat="javascript"><![CDATA[let requestId = $args.requestId;
+console.log("requestId is  " + requestId);
+$ctx.varCtx().set('requestId', requestId);]]></camunda:script>
+            </camunda:outputParameter>
+            <camunda:outputParameter name="Output_27p9v5g">
+              <camunda:map>
+                <camunda:entry key="请求ID">string:requestId</camunda:entry>
+              </camunda:map>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_0b1lmtl</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_17euxmj</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:sequenceFlow id="SequenceFlow_0b1lmtl" sourceRef="StartEvent_1hz43s2" targetRef="submitRequest" />
+      <bpmn:endEvent id="EndEvent_12hezwm">
+        <bpmn:incoming>SequenceFlow_03uardf</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:subProcess id="ReviewRequestSubprocess" name="审核申请流程">
+        <bpmn:extensionElements>
+          <camunda:properties>
+            <camunda:property name="startCandidateGroups" value="[&#34;financingInstitution&#34;]" />
+            <camunda:property name="stopCandidateGroups" value="[&#34;financingInstitution&#34;]" />
+            <camunda:property name="startLabel" value="&#34;开始审核申请&#34;" />
+            <camunda:property name="stopLabel" value="&#34;&#34;" />
+          </camunda:properties>
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_17euxmj</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_03uardf</bpmn:outgoing>
+        <bpmn:multiInstanceLoopCharacteristics camunda:collection="not_used" />
+        <bpmn:userTask id="reviewRequest1" name="审核申请1" camunda:candidateGroups="[&#34;financingInstitution&#34;]">
+          <bpmn:extensionElements>
+            <camunda:formData>
+              <camunda:formField id="approved1" label="是否批准1" type="boolean" defaultValue="true" />
+            </camunda:formData>
+            <camunda:inputOutput>
+              <camunda:outputParameter name="Output_1jo9a1s">
+                <camunda:script scriptFormat="javascripte"><![CDATA[let approved1 = $args.approved1;
+console.log("approved1 is " + approved1);
+$ctx.varCtx().set('approved1', approved1);]]></camunda:script>
+              </camunda:outputParameter>
+            </camunda:inputOutput>
+          </bpmn:extensionElements>
+          <bpmn:incoming>SequenceFlow_0ygee6y</bpmn:incoming>
+          <bpmn:outgoing>SequenceFlow_0smsbl4</bpmn:outgoing>
+        </bpmn:userTask>
+        <bpmn:startEvent id="StartEvent_0x316bi">
+          <bpmn:outgoing>SequenceFlow_0ygee6y</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:userTask id="reviewRequest2" name="审核申请2" camunda:candidateGroups="[&#34;financingInstitution&#34;]">
+          <bpmn:extensionElements>
+            <camunda:formData>
+              <camunda:formField id="approved2" label="是否批准2" type="boolean" defaultValue="true" />
+            </camunda:formData>
+            <camunda:inputOutput>
+              <camunda:outputParameter name="Output_17htr6v">
+                <camunda:script scriptFormat="javascript"><![CDATA[let approved2 = $args.approved2;
+console.log("approved1 is  " + approved2);
+$ctx.varCtx().set('approved2', approved2);]]></camunda:script>
+              </camunda:outputParameter>
+            </camunda:inputOutput>
+          </bpmn:extensionElements>
+          <bpmn:incoming>SequenceFlow_0smsbl4</bpmn:incoming>
+          <bpmn:outgoing>SequenceFlow_1tuoabo</bpmn:outgoing>
+        </bpmn:userTask>
+        <bpmn:sequenceFlow id="SequenceFlow_0ygee6y" sourceRef="StartEvent_0x316bi" targetRef="reviewRequest1" />
+        <bpmn:sequenceFlow id="SequenceFlow_0smsbl4" sourceRef="reviewRequest1" targetRef="reviewRequest2" />
+        <bpmn:endEvent id="EndEvent_1tglopo">
+          <bpmn:incoming>SequenceFlow_1tuoabo</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_1tuoabo" sourceRef="reviewRequest2" targetRef="EndEvent_1tglopo" />
+      </bpmn:subProcess>
+      <bpmn:sequenceFlow id="SequenceFlow_17euxmj" sourceRef="submitRequest" targetRef="ReviewRequestSubprocess" />
+      <bpmn:sequenceFlow id="SequenceFlow_03uardf" sourceRef="ReviewRequestSubprocess" targetRef="EndEvent_12hezwm" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_1g5xdso" sourceRef="ProcessRequestSubprocess" targetRef="EndEvent_0ma8sz9" />
+    <bpmn:endEvent id="EndEvent_0ma8sz9">
+      <bpmn:incoming>SequenceFlow_1g5xdso</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="random">
+      <bpmndi:BPMNShape id="Participant_1het0to_di" bpmnElement="Participant_1het0to">
+        <dc:Bounds x="51" y="-50" width="1211" height="534.6874279123414" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_07q8slq_di" bpmnElement="seller">
+        <dc:Bounds x="81" y="-50" width="1181" height="216" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0q4qhsr_di" bpmnElement="financingInstitution">
+        <dc:Bounds x="81" y="166" width="1181" height="318.6874279123414" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0785gdi_di" bpmnElement="StartEvent_0785gdi">
+        <dc:Bounds x="145.2809587217044" y="90.17709720372838" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="164" y="126.17709720372838" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0phd6zw_di" bpmnElement="ProcessRequestSubprocess" isExpanded="true">
+        <dc:Bounds x="227" y="8" width="859" height="421" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10nkbh1_di" bpmnElement="SequenceFlow_10nkbh1">
+        <di:waypoint xsi:type="dc:Point" x="181" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="201" y="108" />
+        <di:waypoint xsi:type="dc:Point" x="201" y="219" />
+        <di:waypoint xsi:type="dc:Point" x="227" y="219" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="216" y="163.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1hz43s2_di" bpmnElement="StartEvent_1hz43s2">
+        <dc:Bounds x="247" y="101" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="266" y="137" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_124srdh_di" bpmnElement="submitRequest">
+        <dc:Bounds x="331" y="79" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b1lmtl_di" bpmnElement="SequenceFlow_0b1lmtl">
+        <di:waypoint xsi:type="dc:Point" x="283" y="119" />
+        <di:waypoint xsi:type="dc:Point" x="331" y="119" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="307" y="104" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_07mw3i1_di" bpmnElement="reviewRequest1">
+        <dc:Bounds x="596" y="262" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_12hezwm_di" bpmnElement="EndEvent_12hezwm">
+        <dc:Bounds x="1012" y="286" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1031" y="322" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0ma8sz9_di" bpmnElement="EndEvent_0ma8sz9">
+        <dc:Bounds x="1159" y="201" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1178" y="237" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1vdbga2_di" bpmnElement="ReviewRequestSubprocess" isExpanded="true">
+        <dc:Bounds x="501" y="200" width="482" height="208" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_17euxmj_di" bpmnElement="SequenceFlow_17euxmj">
+        <di:waypoint xsi:type="dc:Point" x="431" y="119" />
+        <di:waypoint xsi:type="dc:Point" x="467" y="119" />
+        <di:waypoint xsi:type="dc:Point" x="467" y="305" />
+        <di:waypoint xsi:type="dc:Point" x="501" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="482" y="212" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_0x316bi_di" bpmnElement="StartEvent_0x316bi">
+        <dc:Bounds x="521.1222606689735" y="283.6874279123414" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="540" y="319.6874279123414" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_12r1wsf_di" bpmnElement="reviewRequest2">
+        <dc:Bounds x="762" y="262" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ygee6y_di" bpmnElement="SequenceFlow_0ygee6y">
+        <di:waypoint xsi:type="dc:Point" x="557" y="302" />
+        <di:waypoint xsi:type="dc:Point" x="596" y="302" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="577" y="277" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0smsbl4_di" bpmnElement="SequenceFlow_0smsbl4">
+        <di:waypoint xsi:type="dc:Point" x="696" y="302" />
+        <di:waypoint xsi:type="dc:Point" x="762" y="302" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="729" y="287" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1tglopo_di" bpmnElement="EndEvent_1tglopo">
+        <dc:Bounds x="915.0645905420992" y="283.6874279123414" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="934" y="319.6874279123414" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tuoabo_di" bpmnElement="SequenceFlow_1tuoabo">
+        <di:waypoint xsi:type="dc:Point" x="862" y="302" />
+        <di:waypoint xsi:type="dc:Point" x="915" y="302" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="889" y="277" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03uardf_di" bpmnElement="SequenceFlow_03uardf">
+        <di:waypoint xsi:type="dc:Point" x="983" y="304" />
+        <di:waypoint xsi:type="dc:Point" x="1012" y="304" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="998" y="279" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1g5xdso_di" bpmnElement="SequenceFlow_1g5xdso">
+        <di:waypoint xsi:type="dc:Point" x="1086" y="219" />
+        <di:waypoint xsi:type="dc:Point" x="1119" y="219" />
+        <di:waypoint xsi:type="dc:Point" x="1119" y="219" />
+        <di:waypoint xsi:type="dc:Point" x="1159" y="219" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1134" y="219" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

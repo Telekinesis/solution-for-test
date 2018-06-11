@@ -1,0 +1,52 @@
+import groovy.json.JsonSlurper
+
+def packageSlurper = new JsonSlurper()
+def packageJson = packageSlurper.parse file('package.json')
+group = packageJson.group
+if (project.hasProperty('newVersion')) {
+    version = newVersion
+    println "Use version ${version} in Environment Variable"
+} else {
+    version = packageJson.version
+    println "Use version ${version} in package.json"
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    group = rootProject.group
+    version = rootProject.version
+
+    ext {
+        oboeVersion = '1.15.0'
+    }
+
+    repositories {
+        maven {
+            url "${mvnUrl}"
+        }
+
+        maven {
+            url "${nexusUrl}/repository/maven-public/"
+            credentials {
+                username nexusUsername
+                password nexusPassword
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+
+    dependencies {
+        compile 'org.slf4j:slf4j-api:1.7.25'
+        compile "com.umarkcloud:oboe-java-sdk-api:${oboeVersion}"
+
+        testCompile 'org.testng:testng:6.8.1'
+    }
+
+    test {
+        useTestNG()
+    }
+
+}

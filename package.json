@@ -1,0 +1,26 @@
+{
+  "name": "solution-for-test",
+  "version": "1.0.0",
+  "group": "com.umarkcloud",
+  "description": "solution for test",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "models": {
+    "mscjar1": "com.umarkcloud.msc.jar1",
+    "mscjar2": "com.umarkcloud.msc.jar2"
+  },
+  "envs": {
+    "staging": "http://localhost:3001",
+    "prod": "rest_url2"
+  },
+  "process": {
+    "multi_instance": {
+       "name": "多实例子流程",
+       "steps": ["multi_instance.js"]
+    }
+  }
+}
